@@ -2,6 +2,9 @@
 //  HTTPCommunication.m
 //  MastWeatherApp
 //
+//  This class is responsible for NSURLSession Communication. It will fire the request and send response back to
+//  the registered delegate methods.
+//
 //  Created by swapna on 03/06/16.
 //  Copyright © 2016 swapna. All rights reserved.
 //
@@ -22,16 +25,13 @@
 
 -(void)requestWithURL:(NSString *)endPoint andDelegate:(id<ResponseDelegate>)responseDelegate{
     
-    // NSURLSession always makes request in a background queue.
-    
+    // NSURLSession always makes request in a background queue. Hence not firing the request explicitly in one.
     NSURLSessionConfiguration *defaultConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];
     _session = [NSURLSession sessionWithConfiguration: defaultConfigObject delegate:nil delegateQueue: [NSOperationQueue mainQueue]];
-    
     NSURL * url = [NSURL URLWithString:endPoint];
     
-    NSURLSessionDataTask * dataTask = [_session dataTaskWithURL:url
-                                                    completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-                                                        
+    NSURLSessionDataTask * dataTask = [_session dataTaskWithURL:url completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+        
         if (responseDelegate != nil) {
             if (error != nil) {
                 [responseDelegate onError:error.localizedDescription];
@@ -42,12 +42,7 @@
                     [responseDelegate onNoData];
                 }
             }
-
-        } else {
-            [responseDelegate onError:@"No Delegate present"];
         }
-                                                        
-                                                        
     }];
     
     [dataTask resume];
@@ -56,6 +51,5 @@
 -(void) cancelRequest {
     [_session invalidateAndCancel];
 }
-
 
 @end

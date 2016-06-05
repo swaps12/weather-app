@@ -2,6 +2,9 @@
 //  ForecastWeatherInfo.h
 //  MastWeatherApp
 //
+//  This model class is for Forecast Weather API. Only required Data is collected.
+//  We will display read weather readings(time, temp and icon) per day for next four days.
+//
 //  Created by swapna on 03/06/16.
 //  Copyright © 2016 swapna. All rights reserved.
 //

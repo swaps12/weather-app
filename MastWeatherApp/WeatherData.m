@@ -13,7 +13,7 @@
 
 static WeatherData *sharedWeatherData = nil;
 
-
+// singleton instance.
 + (id)sharedInstance {
     
     static dispatch_once_t onceToken;
@@ -30,8 +30,7 @@ static WeatherData *sharedWeatherData = nil;
 
 
 -(void) getData {
-    // We first Shoot the current data Request.
-    
+    // We first trigger the current data API Request.
     CurrentDataRequest *request = [CurrentDataRequest new];
     [request setDelegate:self];
     [request getCurrentData];
@@ -41,19 +40,24 @@ static WeatherData *sharedWeatherData = nil;
 
 -(void) currentDataAvailable:(BOOL)isAvailable withData:(CurrentWeatherInfo *)data {
     
-    if (isAvailable) {
+    // If the current weather data is available we retreive forecast data. Else we display a generic error message.
+    if (isAvailable && data != nil) {
         sharedWeatherData.currentWeather = data;
+        
+        // Now we request the other Data.
+        ForecastDataRequest *request = [ForecastDataRequest new];
+        [request setDelegate:self];
+        [request getForecastData];
+        
         
         if (_delegate != nil) {
             [_delegate currentDataRecevied];
         }
+    } else {
+        if (_delegate != nil) {
+            [_delegate noDataReceived];
+        }
     }
-    
-    // Now we request the other Data.
-    ForecastDataRequest *request = [ForecastDataRequest new];
-    [request setDelegate:self];
-    [request getForecastData];
-    
 }
 
 #pragma end

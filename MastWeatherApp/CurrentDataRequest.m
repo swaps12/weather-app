@@ -16,6 +16,8 @@
 }
 
 -(void) getCurrentData {
+    
+    // Initiates http communicates and registers self as delegate to receive response.
     NSString *endPoint = [self getEndPoint];
     if (endPoint != nil && ![endPoint isEqualToString:@""]) {
         communication = [HTTPCommunication new];
@@ -25,6 +27,8 @@
 
 -(NSString *) getEndPoint {
     
+    // Replace tokens in the endpoint. Tokens are placed in Request Data.
+    // Tokens replaced are city ID and app ID.
     NSRange locationIDRange = [ENDPOINT rangeOfString:@"%locationID%"];
     NSMutableString *endpoint = [NSMutableString stringWithFormat:@"%@", ENDPOINT];
     
@@ -39,8 +43,6 @@
     {
         [endpoint replaceCharactersInRange:APIKeyRange withString:API_KEY_VALUE];
     }
-    
-    NSLog(@"Final End Point is %@", endpoint);
     
     return endpoint;
 }
@@ -57,14 +59,12 @@
     
     @try {
         NSError *error;
-    
-        // Parsing Data.
+        // Parsing Current Weather Data and creaing model objects.
         NSDictionary *responseDic = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:&error];
         
         if (responseDic != nil) {
             CurrentWeatherInfo *info = [CurrentWeatherInfo new];
             [info setName:[responseDic objectForKey:@"name"]];
-            
             
             [info setWeatherdescription:[self getDescription:responseDic]];
             [info setTemp:[self getTemp:responseDic]];
@@ -72,7 +72,6 @@
             if (_delegate != nil) {
                 [_delegate currentDataAvailable:YES withData:info];
             }
-            
         } else {
             if (_delegate != nil) {
                 [_delegate currentDataAvailable:NO withData:nil];
@@ -80,12 +79,10 @@
         }
         
     } @catch (NSException *exception) {
-        // Parsing Error.
         if (_delegate != nil) {
             [_delegate currentDataAvailable:NO withData:nil];
         }
     }
-
 }
 
 -(void) onNoData {
@@ -99,19 +96,19 @@
 #pragma mark - Utils Methods.
 
 -(NSString *) getDescription: (NSDictionary *) responseDict {
-    NSString *description;
+    // Retreive desciption from the json response dictionary
     
+    NSString *description;
     for (NSDictionary *dic in [responseDict objectForKey:@"weather"]) {
         description = [dic objectForKey:@"description"];
     }
-    
-    
     return description;
 }
 
 -(int) getTemp:(NSDictionary *) responseDict {
+    // Retreive temperature from the json response dictionary
+
     int temp;
-    
     NSDictionary *dic = [responseDict objectForKey:@"main"];
     temp = [[dic objectForKey:@"temp"] intValue];
     

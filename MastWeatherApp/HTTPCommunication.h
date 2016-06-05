@@ -2,6 +2,9 @@
 //  HTTPCommunication.h
 //  MastWeatherApp
 //
+//  This class is responsible for NSURLSession Communication. It will fire the request and send response back to
+//  the registered delegate methods.
+//
 //  Created by swapna on 03/06/16.
 //  Copyright © 2016 swapna. All rights reserved.
 //
@@ -15,7 +18,6 @@
 -(void) onNoData;
 
 @end
-
 
 @interface HTTPCommunication : NSObject <NSURLConnectionDelegate>
 
