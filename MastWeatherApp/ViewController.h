@@ -7,8 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "WeatherData.h"
 
-@interface ViewController : UIViewController
+@interface ViewController : UIViewController <WeatherDataDelegate, UITableViewDelegate, UITableViewDataSource, UICollectionViewDelegate, UICollectionViewDataSource>
 
 
 @end
